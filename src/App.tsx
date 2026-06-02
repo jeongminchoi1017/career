@@ -62,7 +62,6 @@ export default function App() {
       <main className="content">
         {page === 'today' && (
           <Today
-            onOpenCheckin={() => setShowCheckin(true)}
             onOpenTodo={() => setShowTodo(true)}
             refresh={refresh}
           />

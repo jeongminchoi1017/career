@@ -34,6 +34,9 @@ contextBridge.exposeInMainWorld('api', {
   // Git
   collectGit: () => ipcRenderer.invoke('git:collect'),
 
+  // Reset
+  resetAllData: () => ipcRenderer.invoke('db:resetAllData'),
+
   // Events from main
   onOpenCheckin: (cb: () => void) => ipcRenderer.on('open:checkin', cb),
   onOpenTodo: (cb: () => void) => ipcRenderer.on('open:todo', cb),

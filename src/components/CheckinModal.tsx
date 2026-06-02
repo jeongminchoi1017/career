@@ -16,6 +16,7 @@ export default function CheckinModal({ onClose, onSaved }: Props) {
   const [description, setDescription] = useState('')
   const [impact, setImpact] = useState('')
   const [saving, setSaving] = useState(false)
+  const [error, setError] = useState('')
   const [newTech, setNewTech] = useState('')
   const [addingTech, setAddingTech] = useState(false)
 
@@ -44,17 +45,23 @@ export default function CheckinModal({ onClose, onSaved }: Props) {
   const save = async () => {
     if (!description.trim()) return
     setSaving(true)
-    await api.insertLog({
-      timestamp: new Date().toISOString(),
-      source: 'checkin',
-      work_type: selectedType || undefined,
-      techs: selectedTechs.length ? selectedTechs : undefined,
-      description: description.trim(),
-      impact: impact.trim() || undefined,
-    })
-    setSaving(false)
-    onSaved()
-    onClose()
+    setError('')
+    try {
+      await api.insertLog({
+        timestamp: new Date().toISOString(),
+        source: 'checkin',
+        work_type: selectedType || undefined,
+        techs: selectedTechs.length ? selectedTechs : undefined,
+        description: description.trim(),
+        impact: impact.trim() || undefined,
+      })
+      onSaved()
+      onClose()
+    } catch (e) {
+      setError(`저장 실패: ${e instanceof Error ? e.message : String(e)}`)
+    } finally {
+      setSaving(false)
+    }
   }
 
   return (
@@ -137,6 +144,7 @@ export default function CheckinModal({ onClose, onSaved }: Props) {
           </section>
         </div>
 
+        {error && <div className="modal-error">{error}</div>}
         <div className="modal-footer">
           <button className="btn-cancel" onClick={onClose}>취소</button>
           <button className="btn-save" onClick={save} disabled={!description.trim() || saving}>

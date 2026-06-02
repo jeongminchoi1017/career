@@ -16,32 +16,9 @@ const mockTechTags: TechTag[] = [
   { id: 7, label: 'AWS' }, { id: 8, label: 'Prisma' },
 ]
 
-const mockLogs: Log[] = [
-  {
-    id: 1,
-    timestamp: new Date().toISOString(),
-    source: 'checkin',
-    work_type: '기능 개발',
-    techs: JSON.stringify(['React', 'TypeScript']),
-    description: '체크인 모달 UI 구현',
-    impact: '체크인 저장 시간 50% 단축',
-  },
-  {
-    id: 2,
-    timestamp: new Date(Date.now() - 2 * 3600000).toISOString(),
-    source: 'git',
-    techs: JSON.stringify(['TypeScript', 'Node.js']),
-    description: 'feat: add sqlite db schema and ipc handlers',
-    repo: '/dev/career-tracker',
-    commit_hash: 'a1b2c3d4e5f6',
-  },
-]
+const mockLogs: Log[] = []
 
-const mockTodos: Todo[] = [
-  { id: 1, date: new Date().toISOString().slice(0, 10), content: 'DB 스키마 설계', work_type: '기능 개발', done: 1 },
-  { id: 2, date: new Date().toISOString().slice(0, 10), content: 'Electron IPC 연결', work_type: '기능 개발', done: 0 },
-  { id: 3, date: new Date().toISOString().slice(0, 10), content: '타임라인 뷰 구현', work_type: '기능 개발', done: 0 },
-]
+const mockTodos: Todo[] = []
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const electronApi = (window as any).api
@@ -51,10 +28,18 @@ const mockApi = {
   getLogs: async () => mockLogs,
   getLogsByDate: async () => mockLogs,
   deleteLog: async () => {},
-  getTodos: async () => mockTodos,
-  insertTodo: async () => {},
-  toggleTodo: async () => {},
-  deleteTodo: async () => {},
+  getTodos: async () => [...mockTodos],
+  insertTodo: async (_date: string, content: string, work_type?: string) => {
+    mockTodos.push({ id: Date.now(), date: new Date().toISOString().slice(0, 10), content, work_type, done: 0 })
+  },
+  toggleTodo: async (id: number, done: boolean) => {
+    const t = mockTodos.find(t => t.id === id)
+    if (t) t.done = done ? 1 : 0
+  },
+  deleteTodo: async (id: number) => {
+    const idx = mockTodos.findIndex(t => t.id === id)
+    if (idx !== -1) mockTodos.splice(idx, 1)
+  },
   getSetting: async (key: string) => {
     const defaults: Record<string, string> = {
       morning_time: '09:00',
@@ -66,15 +51,29 @@ const mockApi = {
     return defaults[key] ?? null
   },
   setSetting: async () => {},
-  getWorkTypes: async () => mockWorkTypes,
-  insertWorkType: async () => {},
-  deleteWorkType: async () => {},
+  getWorkTypes: async () => [...mockWorkTypes],
+  insertWorkType: async (label: string, color: string) => {
+    mockWorkTypes.push({ id: Date.now(), label, color, sort_order: mockWorkTypes.length })
+  },
+  deleteWorkType: async (id: number) => {
+    const idx = mockWorkTypes.findIndex(w => w.id === id)
+    if (idx !== -1) mockWorkTypes.splice(idx, 1)
+  },
   reorderWorkTypes: async () => {},
-  getTechTags: async () => mockTechTags,
-  insertTechTag: async () => {},
-  deleteTechTag: async () => {},
-  getStats: async (): Promise<Stats> => ({ totalLogs: 42, totalCommits: 18, workDays: 12 }),
+  getTechTags: async () => [...mockTechTags],
+  insertTechTag: async (label: string) => {
+    mockTechTags.push({ id: Date.now(), label })
+  },
+  deleteTechTag: async (id: number) => {
+    const idx = mockTechTags.findIndex(t => t.id === id)
+    if (idx !== -1) mockTechTags.splice(idx, 1)
+  },
+  getStats: async (): Promise<Stats> => ({ totalLogs: 0, totalCommits: 0, workDays: 0 }),
   collectGit: async () => {},
+  resetAllData: async () => {
+    mockLogs.splice(0)
+    mockTodos.splice(0)
+  },
   onOpenCheckin: () => {},
   onOpenTodo: () => {},
   removeListener: () => {},
@@ -112,6 +111,7 @@ export default (electronApi ?? mockApi) as {
 
   getStats(): Promise<Stats>
   collectGit(): Promise<void>
+  resetAllData(): Promise<void>
 
   onOpenCheckin(cb: () => void): void
   onOpenTodo(cb: () => void): void

@@ -4,12 +4,11 @@ import type { Todo, Log } from '../types'
 import './Today.css'
 
 interface Props {
-  onOpenCheckin: () => void
   onOpenTodo: () => void
   refresh: number
 }
 
-export default function Today({ onOpenCheckin, onOpenTodo, refresh }: Props) {
+export default function Today({ onOpenTodo, refresh }: Props) {
   const today = new Date().toISOString().slice(0, 10)
   const [todos, setTodos] = useState<Todo[]>([])
   const [commits, setCommits] = useState<Log[]>([])
@@ -46,8 +45,7 @@ export default function Today({ onOpenCheckin, onOpenTodo, refresh }: Props) {
           <p className="today-date">{new Date().toLocaleDateString('ko-KR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
         </div>
         <div className="today-actions">
-          <button className="action-btn" onClick={onOpenTodo}>+ 할 일</button>
-          <button className="action-btn primary" onClick={onOpenCheckin}>✏️ 체크인</button>
+          <button className="action-btn primary" onClick={onOpenTodo}>+ 할 일</button>
         </div>
       </div>
 

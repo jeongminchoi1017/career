@@ -212,7 +212,7 @@ export default function Settings() {
           {techTags.map(tt => (
             <div key={tt.id} className="tech-chip">
               <span>{tt.label}</span>
-              <button onClick={() => removeTech(tt.id)}>✕</button>
+              <button onClick={e => { e.stopPropagation(); removeTech(tt.id) }}>✕</button>
             </div>
           ))}
         </div>

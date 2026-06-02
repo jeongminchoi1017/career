@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, Notification, nativeImage } from 'electron'
+import { app, BrowserWindow, ipcMain, Notification } from 'electron'
 import path from 'path'
 import {
   getDb, insertLog, getLogs, getLogsByDate, deleteLog,
@@ -6,7 +6,7 @@ import {
   getSetting, setSetting,
   getWorkTypes, insertWorkType, deleteWorkType, reorderWorkTypes,
   getTechTags, insertTechTag, deleteTechTag,
-  getStats,
+  getStats, resetAllData,
 } from './db'
 import { collectGitLogs } from './git-collector'
 
@@ -25,8 +25,8 @@ function createWindow() {
       contextIsolation: true,
       nodeIntegration: false,
     },
-    titleBarStyle: 'hiddenInset',
     backgroundColor: '#0f0f13',
+    autoHideMenuBar: true,
   })
 
   if (isDev) {
@@ -116,7 +116,14 @@ function sendNotification(title: string, body: string, action: 'checkin' | 'todo
 
 // --- IPC ---
 function setupIpc() {
-  ipcMain.handle('db:insertLog', (_, data) => insertLog(data))
+  ipcMain.handle('db:insertLog', async (_, data) => {
+    try {
+      return insertLog(data)
+    } catch (e) {
+      console.error('[db:insertLog]', e)
+      throw e
+    }
+  })
   ipcMain.handle('db:getLogs', (_, from, to) => getLogs(from, to))
   ipcMain.handle('db:getLogsByDate', (_, date) => getLogsByDate(date))
   ipcMain.handle('db:deleteLog', (_, id) => deleteLog(id))
@@ -148,6 +155,11 @@ function setupIpc() {
 
   ipcMain.handle('git:collect', async () => {
     await collectGitLogs()
+    return true
+  })
+
+  ipcMain.handle('db:resetAllData', () => {
+    resetAllData()
     return true
   })
 }

@@ -20,8 +20,8 @@ function createWindow() {
             contextIsolation: true,
             nodeIntegration: false,
         },
-        titleBarStyle: 'hiddenInset',
         backgroundColor: '#0f0f13',
+        autoHideMenuBar: true,
     });
     if (isDev) {
         mainWindow.loadURL('http://localhost:5173');
@@ -35,9 +35,9 @@ electron_1.app.whenReady().then(() => {
     createWindow();
     setupIpc();
     scheduleNotifications();
-    // Collect git logs on startup and every 30 min
+    // Collect git logs on startup and every 24 hours
     (0, git_collector_1.collectGitLogs)();
-    setInterval(git_collector_1.collectGitLogs, 30 * 60 * 1000);
+    setInterval(git_collector_1.collectGitLogs, 24 * 60 * 60 * 1000);
 });
 electron_1.app.on('window-all-closed', () => {
     if (process.platform !== 'darwin')
@@ -107,7 +107,15 @@ function sendNotification(title, body, action) {
 }
 // --- IPC ---
 function setupIpc() {
-    electron_1.ipcMain.handle('db:insertLog', (_, data) => (0, db_1.insertLog)(data));
+    electron_1.ipcMain.handle('db:insertLog', async (_, data) => {
+        try {
+            return (0, db_1.insertLog)(data);
+        }
+        catch (e) {
+            console.error('[db:insertLog]', e);
+            throw e;
+        }
+    });
     electron_1.ipcMain.handle('db:getLogs', (_, from, to) => (0, db_1.getLogs)(from, to));
     electron_1.ipcMain.handle('db:getLogsByDate', (_, date) => (0, db_1.getLogsByDate)(date));
     electron_1.ipcMain.handle('db:deleteLog', (_, id) => (0, db_1.deleteLog)(id));
@@ -133,6 +141,10 @@ function setupIpc() {
     electron_1.ipcMain.handle('db:getStats', () => (0, db_1.getStats)());
     electron_1.ipcMain.handle('git:collect', async () => {
         await (0, git_collector_1.collectGitLogs)();
+        return true;
+    });
+    electron_1.ipcMain.handle('db:resetAllData', () => {
+        (0, db_1.resetAllData)();
         return true;
     });
 }

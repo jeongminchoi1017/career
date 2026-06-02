@@ -28,6 +28,8 @@ electron_1.contextBridge.exposeInMainWorld('api', {
     getStats: () => electron_1.ipcRenderer.invoke('db:getStats'),
     // Git
     collectGit: () => electron_1.ipcRenderer.invoke('git:collect'),
+    // Reset
+    resetAllData: () => electron_1.ipcRenderer.invoke('db:resetAllData'),
     // Events from main
     onOpenCheckin: (cb) => electron_1.ipcRenderer.on('open:checkin', cb),
     onOpenTodo: (cb) => electron_1.ipcRenderer.on('open:todo', cb),
