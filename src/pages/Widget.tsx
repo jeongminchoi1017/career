@@ -23,7 +23,6 @@ export default function Widget() {
 
   useEffect(() => {
     load()
-    // ESC로 닫기
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') api.hideWidget?.()
     }
@@ -50,6 +49,11 @@ export default function Widget() {
     setTodoInput('')
     setSavedTodo(true)
     setTimeout(() => setSavedTodo(false), 1500)
+    load()
+  }
+
+  const toggleTodo = async (todo: Todo) => {
+    await api.toggleTodo(todo.id, !todo.done)
     load()
   }
 
@@ -96,13 +100,34 @@ export default function Widget() {
         </div>
       </div>
 
-      {/* Quick todo */}
-      <div className="widget-section">
-        <div className="widget-label">할 일 추가</div>
-        <div className="widget-input-row">
+      {/* Todo list */}
+      <div className="widget-section widget-section-grow">
+        <div className="widget-label-row">
+          <span className="widget-label">할 일</span>
+          {todos.length > 0 && (
+            <span className="widget-label-count">{doneTodos}/{todos.length}</span>
+          )}
+        </div>
+
+        {todos.length > 0 && (
+          <ul className="widget-todo-list">
+            {todos.map(todo => (
+              <li
+                key={todo.id}
+                className={`widget-todo-item ${todo.done ? 'done' : ''}`}
+                onClick={() => toggleTodo(todo)}
+              >
+                <span className="widget-todo-check">{todo.done ? '✓' : ''}</span>
+                <span className="widget-todo-text">{todo.content}</span>
+              </li>
+            ))}
+          </ul>
+        )}
+
+        <div className="widget-input-row" style={{ marginTop: todos.length ? '8px' : '0' }}>
           <input
             className="widget-input"
-            placeholder="오늘 할 일 (Enter)"
+            placeholder="+ 할 일 추가 (Enter)"
             value={todoInput}
             onChange={e => setTodoInput(e.target.value)}
             onKeyDown={e => e.key === 'Enter' && saveTodo()}
@@ -110,23 +135,6 @@ export default function Widget() {
           {savedTodo && <span className="widget-saved">✓</span>}
         </div>
       </div>
-
-      {/* Recent checkins */}
-      {checkins.length > 0 && (
-        <div className="widget-section">
-          <div className="widget-label">오늘 체크인</div>
-          <ul className="widget-log-list">
-            {[...checkins].reverse().slice(0, 4).map(c => (
-              <li key={c.id} className="widget-log-item">
-                <span className="widget-log-time">
-                  {new Date(c.timestamp).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })}
-                </span>
-                <span className="widget-log-desc">{c.description}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
 
       {/* Footer */}
       <button className="widget-open-main" onClick={() => api.openMainWindow?.()}>
