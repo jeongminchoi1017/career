@@ -40,6 +40,7 @@
 .filter-row {
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   gap: 10px;
   margin-bottom: 20px;
 }
@@ -59,7 +60,6 @@
 .filter-sep { color: #555; }
 
 .export-btn {
-  margin-left: auto;
   padding: 9px 18px;
   border-radius: 8px;
   border: 1px solid #4f46e5;
