@@ -71,20 +71,20 @@ export default function Timeline({ refresh }: Props) {
                     {log.source === 'git' ? 'Git' : '체크인'}
                   </span>
                   {log.work_type && <span className="work-type-label">{log.work_type}</span>}
-                  <div className="card-actions">
-                    {log.source === 'checkin' && (
+                  {log.source === 'checkin' && (
+                    <div className="card-actions">
                       <button className="card-edit" onClick={() => setEditingLog(log)}>✏️</button>
-                    )}
-                    {confirmDeleteId === log.id ? (
-                      <>
-                        <span className="delete-confirm-text">삭제?</span>
-                        <button className="card-delete-confirm" onClick={() => remove(log.id)}>확인</button>
-                        <button className="card-delete-cancel" onClick={() => setConfirmDeleteId(null)}>취소</button>
-                      </>
-                    ) : (
-                      <button className="card-delete" onClick={() => setConfirmDeleteId(log.id)}>🗑</button>
-                    )}
-                  </div>
+                      {confirmDeleteId === log.id ? (
+                        <>
+                          <span className="delete-confirm-text">삭제?</span>
+                          <button className="card-delete-confirm" onClick={() => remove(log.id)}>확인</button>
+                          <button className="card-delete-cancel" onClick={() => setConfirmDeleteId(null)}>취소</button>
+                        </>
+                      ) : (
+                        <button className="card-delete" onClick={() => setConfirmDeleteId(log.id)}>🗑</button>
+                      )}
+                    </div>
+                  )}
                 </div>
                 <p className="card-desc">{log.description}</p>
                 {log.impact && <p className="card-impact">⚡ {log.impact}</p>}
