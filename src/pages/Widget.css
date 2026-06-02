@@ -142,7 +142,60 @@ body {
   to { opacity: 1; transform: scale(1); }
 }
 
-/* Section grow */
+/* Scrollable body */
+.widget-body {
+  flex: 1;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #2a2a3a transparent;
+}
+
+.widget-body::-webkit-scrollbar { width: 4px; }
+.widget-body::-webkit-scrollbar-thumb { background: #2a2a3a; border-radius: 2px; }
+
+/* Detail expand */
+.widget-detail-toggle {
+  margin-top: 6px;
+  background: none;
+  border: none;
+  color: #444;
+  cursor: pointer;
+  font-size: 11px;
+  padding: 2px 0;
+  transition: color 0.2s;
+  -webkit-app-region: no-drag;
+}
+
+.widget-detail-toggle:hover { color: #818cf8; }
+
+.widget-detail {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #2a2a3a;
+}
+
+.widget-tag-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.widget-tag {
+  padding: 3px 10px;
+  border-radius: 14px;
+  border: 1px solid #333;
+  background: transparent;
+  cursor: pointer;
+  font-size: 11px;
+  transition: all 0.15s;
+  -webkit-app-region: no-drag;
+}
+
+.widget-tag:hover { opacity: 0.8; }
+.widget-tag.tech { border-color: #333; color: #888; }
+.widget-tag.tech.active { background: #4f46e5; border-color: #4f46e5; color: #fff; }
+
+/* Section grow (legacy) */
 .widget-section-grow {
   flex: 1;
   overflow: hidden;
