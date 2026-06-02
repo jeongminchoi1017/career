@@ -16,7 +16,17 @@ const mockTechTags: TechTag[] = [
   { id: 7, label: 'AWS' }, { id: 8, label: 'Prisma' },
 ]
 
-const mockLogs: Log[] = []
+const mockLogs: Log[] = [
+  {
+    id: 1,
+    timestamp: new Date().toISOString(),
+    source: 'checkin',
+    work_type: '기능 개발',
+    techs: JSON.stringify(['React', 'TypeScript']),
+    description: '타임라인 수정/삭제 기능 구현',
+    impact: '사용자 편의성 향상',
+  },
+]
 
 const mockTodos: Todo[] = []
 
@@ -27,7 +37,19 @@ const mockApi = {
   insertLog: async () => {},
   getLogs: async () => mockLogs,
   getLogsByDate: async () => mockLogs,
-  deleteLog: async () => {},
+  deleteLog: async (id: number) => {
+    const idx = mockLogs.findIndex(l => l.id === id)
+    if (idx !== -1) mockLogs.splice(idx, 1)
+  },
+  updateLog: async (id: number, data: { work_type?: string; techs?: string[]; description?: string; impact?: string }) => {
+    const log = mockLogs.find(l => l.id === id)
+    if (log) {
+      if (data.work_type !== undefined) log.work_type = data.work_type
+      if (data.techs !== undefined) log.techs = JSON.stringify(data.techs)
+      if (data.description !== undefined) log.description = data.description
+      if (data.impact !== undefined) log.impact = data.impact
+    }
+  },
   getTodos: async () => [...mockTodos],
   insertTodo: async (_date: string, content: string, work_type?: string) => {
     mockTodos.push({ id: Date.now(), date: new Date().toISOString().slice(0, 10), content, work_type, done: 0 })
@@ -92,6 +114,7 @@ export default (electronApi ?? mockApi) as {
   getLogs(from?: string, to?: string): Promise<Log[]>
   getLogsByDate(date: string): Promise<Log[]>
   deleteLog(id: number): Promise<void>
+  updateLog(id: number, data: { work_type?: string; techs?: string[]; description?: string; impact?: string }): Promise<void>
 
   getTodos(date: string): Promise<Todo[]>
   insertTodo(date: string, content: string, work_type?: string): Promise<void>

@@ -2,7 +2,7 @@ import { app, BrowserWindow, ipcMain, Notification } from 'electron'
 import path from 'path'
 import fs from 'fs'
 import {
-  getDb, insertLog, getLogs, getLogsByDate, deleteLog,
+  getDb, insertLog, getLogs, getLogsByDate, deleteLog, updateLog,
   getTodos, insertTodo, toggleTodo, deleteTodo,
   getSetting, setSetting,
   getWorkTypes, insertWorkType, deleteWorkType, reorderWorkTypes,
@@ -158,6 +158,7 @@ function setupIpc() {
   ipcMain.handle('db:getLogs', (_, from, to) => getLogs(from, to))
   ipcMain.handle('db:getLogsByDate', (_, date) => getLogsByDate(date))
   ipcMain.handle('db:deleteLog', (_, id) => deleteLog(id))
+  ipcMain.handle('db:updateLog', (_, id, data) => updateLog(id, data))
 
   ipcMain.handle('db:getTodos', (_, date) => getTodos(date))
   ipcMain.handle('db:insertTodo', (_, date, content, work_type) => insertTodo(date, content, work_type))

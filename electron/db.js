@@ -9,6 +9,7 @@ exports.insertLog = insertLog;
 exports.getLogs = getLogs;
 exports.getLogsByDate = getLogsByDate;
 exports.deleteLog = deleteLog;
+exports.updateLog = updateLog;
 exports.getTodos = getTodos;
 exports.insertTodo = insertTodo;
 exports.toggleTodo = toggleTodo;
@@ -133,6 +134,15 @@ function getLogsByDate(date) {
 }
 function deleteLog(id) {
     getDb().run('DELETE FROM logs WHERE id = ?', [id]);
+}
+function updateLog(id, data) {
+    getDb().run(`UPDATE logs SET work_type = ?, techs = ?, description = ?, impact = ? WHERE id = ?`, [
+        data.work_type ?? null,
+        data.techs ? JSON.stringify(data.techs) : null,
+        data.description ?? null,
+        data.impact ?? null,
+        id,
+    ]);
 }
 // --- Todos ---
 function getTodos(date) {

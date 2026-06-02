@@ -7,6 +7,7 @@ electron_1.contextBridge.exposeInMainWorld('api', {
     getLogs: (from, to) => electron_1.ipcRenderer.invoke('db:getLogs', from, to),
     getLogsByDate: (date) => electron_1.ipcRenderer.invoke('db:getLogsByDate', date),
     deleteLog: (id) => electron_1.ipcRenderer.invoke('db:deleteLog', id),
+    updateLog: (id, data) => electron_1.ipcRenderer.invoke('db:updateLog', id, data),
     // Todos
     getTodos: (date) => electron_1.ipcRenderer.invoke('db:getTodos', date),
     insertTodo: (date, content, work_type) => electron_1.ipcRenderer.invoke('db:insertTodo', date, content, work_type),

@@ -6,6 +6,7 @@ contextBridge.exposeInMainWorld('api', {
   getLogs: (from?: string, to?: string) => ipcRenderer.invoke('db:getLogs', from, to),
   getLogsByDate: (date: string) => ipcRenderer.invoke('db:getLogsByDate', date),
   deleteLog: (id: number) => ipcRenderer.invoke('db:deleteLog', id),
+  updateLog: (id: number, data: object) => ipcRenderer.invoke('db:updateLog', id, data),
 
   // Todos
   getTodos: (date: string) => ipcRenderer.invoke('db:getTodos', date),

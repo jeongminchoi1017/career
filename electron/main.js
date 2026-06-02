@@ -153,6 +153,7 @@ function setupIpc() {
     electron_1.ipcMain.handle('db:getLogs', (_, from, to) => (0, db_1.getLogs)(from, to));
     electron_1.ipcMain.handle('db:getLogsByDate', (_, date) => (0, db_1.getLogsByDate)(date));
     electron_1.ipcMain.handle('db:deleteLog', (_, id) => (0, db_1.deleteLog)(id));
+    electron_1.ipcMain.handle('db:updateLog', (_, id, data) => (0, db_1.updateLog)(id, data));
     electron_1.ipcMain.handle('db:getTodos', (_, date) => (0, db_1.getTodos)(date));
     electron_1.ipcMain.handle('db:insertTodo', (_, date, content, work_type) => (0, db_1.insertTodo)(date, content, work_type));
     electron_1.ipcMain.handle('db:toggleTodo', (_, id, done) => (0, db_1.toggleTodo)(id, done));

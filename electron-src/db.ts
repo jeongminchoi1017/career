@@ -138,6 +138,24 @@ export function deleteLog(id: number) {
   getDb().run('DELETE FROM logs WHERE id = ?', [id])
 }
 
+export function updateLog(id: number, data: {
+  work_type?: string
+  techs?: string[]
+  description?: string
+  impact?: string
+}) {
+  getDb().run(
+    `UPDATE logs SET work_type = ?, techs = ?, description = ?, impact = ? WHERE id = ?`,
+    [
+      data.work_type ?? null,
+      data.techs ? JSON.stringify(data.techs) : null,
+      data.description ?? null,
+      data.impact ?? null,
+      id,
+    ]
+  )
+}
+
 // --- Todos ---
 export function getTodos(date: string) {
   return getDb().all('SELECT * FROM todos WHERE date = ? ORDER BY id ASC', [date])

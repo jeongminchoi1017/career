@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import api from '../api'
 import type { Log } from '../types'
+import EditLogModal from '../components/EditLogModal'
 import './Timeline.css'
 
 interface Props {
@@ -10,6 +11,8 @@ interface Props {
 export default function Timeline({ refresh }: Props) {
   const [logs, setLogs] = useState<Log[]>([])
   const [date, setDate] = useState(new Date().toISOString().slice(0, 10))
+  const [editingLog, setEditingLog] = useState<Log | null>(null)
+  const [confirmDeleteId, setConfirmDeleteId] = useState<number | null>(null)
 
   const load = useCallback(async () => {
     const data = await api.getLogsByDate(date)
@@ -34,6 +37,7 @@ export default function Timeline({ refresh }: Props) {
 
   const remove = async (id: number) => {
     await api.deleteLog(id)
+    setConfirmDeleteId(null)
     load()
   }
 
@@ -67,7 +71,20 @@ export default function Timeline({ refresh }: Props) {
                     {log.source === 'git' ? 'Git' : '체크인'}
                   </span>
                   {log.work_type && <span className="work-type-label">{log.work_type}</span>}
-                  <button className="card-delete" onClick={() => remove(log.id)}>✕</button>
+                  <div className="card-actions">
+                    {log.source === 'checkin' && (
+                      <button className="card-edit" onClick={() => setEditingLog(log)}>✏️</button>
+                    )}
+                    {confirmDeleteId === log.id ? (
+                      <>
+                        <span className="delete-confirm-text">삭제?</span>
+                        <button className="card-delete-confirm" onClick={() => remove(log.id)}>확인</button>
+                        <button className="card-delete-cancel" onClick={() => setConfirmDeleteId(null)}>취소</button>
+                      </>
+                    ) : (
+                      <button className="card-delete" onClick={() => setConfirmDeleteId(log.id)}>🗑</button>
+                    )}
+                  </div>
                 </div>
                 <p className="card-desc">{log.description}</p>
                 {log.impact && <p className="card-impact">⚡ {log.impact}</p>}
@@ -83,6 +100,14 @@ export default function Timeline({ refresh }: Props) {
             </div>
           ))}
         </div>
+      )}
+
+      {editingLog && (
+        <EditLogModal
+          log={editingLog}
+          onClose={() => setEditingLog(null)}
+          onSaved={load}
+        />
       )}
     </div>
   )
