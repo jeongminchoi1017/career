@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, Notification } from 'electron'
+import { app, BrowserWindow, ipcMain, Notification, Tray, Menu, globalShortcut, nativeImage, screen } from 'electron'
 import path from 'path'
 import fs from 'fs'
 import {
@@ -14,6 +14,74 @@ import { collectGitLogs } from './git-collector'
 const isDev = process.env.NODE_ENV === 'development'
 
 let mainWindow: BrowserWindow | null = null
+let widgetWindow: BrowserWindow | null = null
+let tray: Tray | null = null
+
+function createTrayIcon(): Electron.NativeImage {
+  const size = 16
+  const buf = Buffer.alloc(size * size * 4)
+  for (let i = 0; i < size * size; i++) {
+    buf[i * 4]     = 0x81  // R
+    buf[i * 4 + 1] = 0x8c  // G
+    buf[i * 4 + 2] = 0xf8  // B
+    buf[i * 4 + 3] = 0xff  // A
+  }
+  return nativeImage.createFromBuffer(buf, { width: size, height: size })
+}
+
+function createWidgetWindow() {
+  widgetWindow = new BrowserWindow({
+    width: 360,
+    height: 480,
+    resizable: false,
+    frame: false,
+    alwaysOnTop: true,
+    skipTaskbar: true,
+    transparent: false,
+    backgroundColor: '#1a1a26',
+    show: false,
+    webPreferences: {
+      preload: path.join(__dirname, 'preload.js'),
+      contextIsolation: true,
+      nodeIntegration: false,
+    },
+  })
+
+  if (isDev) {
+    widgetWindow.loadURL('http://localhost:5173/widget.html')
+  } else {
+    widgetWindow.loadFile(path.join(__dirname, '../dist/widget.html'))
+  }
+
+  widgetWindow.on('blur', () => widgetWindow?.hide())
+  widgetWindow.on('closed', () => { widgetWindow = null })
+}
+
+function toggleWidget() {
+  if (!widgetWindow) createWidgetWindow()
+  if (widgetWindow!.isVisible()) {
+    widgetWindow!.hide()
+  } else {
+    // 화면 우측 하단에 위치
+    const { width, height } = screen.getPrimaryDisplay().workAreaSize
+    const ww = 360, wh = 480
+    widgetWindow!.setBounds({ x: width - ww - 16, y: height - wh - 16, width: ww, height: wh })
+    widgetWindow!.show()
+    widgetWindow!.focus()
+  }
+}
+
+function createTray() {
+  tray = new Tray(createTrayIcon())
+  tray.setToolTip('Career Tracker')
+  tray.on('click', toggleWidget)
+  tray.setContextMenu(Menu.buildFromTemplate([
+    { label: '위젯 열기', click: toggleWidget },
+    { label: '앱 열기', click: () => { mainWindow?.show(); mainWindow?.focus() } },
+    { type: 'separator' },
+    { label: '종료', click: () => app.quit() },
+  ]))
+}
 
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -38,15 +106,22 @@ function createWindow() {
 }
 
 app.whenReady().then(() => {
-  getDb() // init DB
+  getDb()
   createWindow()
+  createWidgetWindow()
+  createTray()
   setupIpc()
   scheduleNotifications()
 
-  // Collect git logs on startup, every 24 hours, and on new commits
+  globalShortcut.register('CommandOrControl+Shift+Space', toggleWidget)
+
   collectGitLogs()
   setInterval(collectGitLogs, 24 * 60 * 60 * 1000)
   watchGitRepos()
+})
+
+app.on('will-quit', () => {
+  globalShortcut.unregisterAll()
 })
 
 // --- Git file watcher ---
@@ -195,5 +270,12 @@ function setupIpc() {
   ipcMain.handle('db:resetAllData', () => {
     resetAllData()
     return true
+  })
+
+  ipcMain.handle('widget:hide', () => widgetWindow?.hide())
+  ipcMain.handle('widget:openMain', () => {
+    mainWindow?.show()
+    mainWindow?.focus()
+    widgetWindow?.hide()
   })
 }

@@ -10,6 +10,71 @@ const db_1 = require("./db");
 const git_collector_1 = require("./git-collector");
 const isDev = process.env.NODE_ENV === 'development';
 let mainWindow = null;
+let widgetWindow = null;
+let tray = null;
+function createTrayIcon() {
+    const size = 16;
+    const buf = Buffer.alloc(size * size * 4);
+    for (let i = 0; i < size * size; i++) {
+        buf[i * 4] = 0x81; // R
+        buf[i * 4 + 1] = 0x8c; // G
+        buf[i * 4 + 2] = 0xf8; // B
+        buf[i * 4 + 3] = 0xff; // A
+    }
+    return electron_1.nativeImage.createFromBuffer(buf, { width: size, height: size });
+}
+function createWidgetWindow() {
+    widgetWindow = new electron_1.BrowserWindow({
+        width: 360,
+        height: 480,
+        resizable: false,
+        frame: false,
+        alwaysOnTop: true,
+        skipTaskbar: true,
+        transparent: false,
+        backgroundColor: '#1a1a26',
+        show: false,
+        webPreferences: {
+            preload: path_1.default.join(__dirname, 'preload.js'),
+            contextIsolation: true,
+            nodeIntegration: false,
+        },
+    });
+    if (isDev) {
+        widgetWindow.loadURL('http://localhost:5173/widget.html');
+    }
+    else {
+        widgetWindow.loadFile(path_1.default.join(__dirname, '../dist/widget.html'));
+    }
+    widgetWindow.on('blur', () => widgetWindow?.hide());
+    widgetWindow.on('closed', () => { widgetWindow = null; });
+}
+function toggleWidget() {
+    if (!widgetWindow)
+        createWidgetWindow();
+    if (widgetWindow.isVisible()) {
+        widgetWindow.hide();
+    }
+    else {
+        // 화면 우측 하단에 위치
+        const { width, height } = electron_1.screen.getPrimaryDisplay().workAreaSize;
+        const ww = 360, wh = 480;
+        widgetWindow.setBounds({ x: width - ww - 16, y: height - wh - 16, width: ww, height: wh });
+        widgetWindow.show();
+        widgetWindow.focus();
+    }
+}
+function createTray() {
+    tray = new electron_1.Tray(createTrayIcon());
+    tray.setToolTip('Career Tracker');
+    tray.on('click', toggleWidget);
+    tray.setContextMenu(electron_1.Menu.buildFromTemplate([
+        { label: '위젯 열기', click: toggleWidget },
+        { label: '앱 열기', click: () => { mainWindow?.show(); mainWindow?.focus(); } },
+        { type: 'separator' },
+        { label: '종료', click: () => electron_1.app.quit() },
+    ]));
+}
 function createWindow() {
     mainWindow = new electron_1.BrowserWindow({
         width: 1100,
@@ -32,14 +97,19 @@ function createWindow() {
     }
 }
 electron_1.app.whenReady().then(() => {
-    (0, db_1.getDb)(); // init DB
+    (0, db_1.getDb)();
     createWindow();
+    createWidgetWindow();
+    createTray();
     setupIpc();
     scheduleNotifications();
-    // Collect git logs on startup, every 24 hours, and on new commits
+    electron_1.globalShortcut.register('CommandOrControl+Shift+Space', toggleWidget);
     (0, git_collector_1.collectGitLogs)();
     setInterval(git_collector_1.collectGitLogs, 24 * 60 * 60 * 1000);
     watchGitRepos();
+});
+electron_1.app.on('will-quit', () => {
+    electron_1.globalShortcut.unregisterAll();
 });
 // --- Git file watcher ---
 const gitWatchers = [];
@@ -183,5 +253,11 @@ function setupIpc() {
     electron_1.ipcMain.handle('db:resetAllData', () => {
         (0, db_1.resetAllData)();
         return true;
+    });
+    electron_1.ipcMain.handle('widget:hide', () => widgetWindow?.hide());
+    electron_1.ipcMain.handle('widget:openMain', () => {
+        mainWindow?.show();
+        mainWindow?.focus();
+        widgetWindow?.hide();
     });
 }

@@ -100,6 +100,8 @@ const mockApi = {
   onOpenTodo: () => {},
   onGitUpdated: () => {},
   removeListener: () => {},
+  hideWidget: () => {},
+  openMainWindow: () => {},
 }
 
 export default (electronApi ?? mockApi) as {
@@ -141,4 +143,6 @@ export default (electronApi ?? mockApi) as {
   onOpenTodo(cb: () => void): void
   onGitUpdated(cb: () => void): void
   removeListener(channel: string, cb: (...args: unknown[]) => void): void
+  hideWidget?(): void
+  openMainWindow?(): void
 }

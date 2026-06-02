@@ -38,6 +38,10 @@ contextBridge.exposeInMainWorld('api', {
   // Reset
   resetAllData: () => ipcRenderer.invoke('db:resetAllData'),
 
+  // Widget
+  hideWidget: () => ipcRenderer.invoke('widget:hide'),
+  openMainWindow: () => ipcRenderer.invoke('widget:openMain'),
+
   // Events from main
   onOpenCheckin: (cb: () => void) => ipcRenderer.on('open:checkin', cb),
   onOpenTodo: (cb: () => void) => ipcRenderer.on('open:todo', cb),
