@@ -9,7 +9,7 @@
     "dev:electron": "cross-env NODE_ENV=development electron .",
     "dev": "concurrently -k -n vite,electron \"npm run dev:vite\" \"npm run build:electron && wait-on tcp:5173 && npm run dev:electron\"",
     "build": "tsc -b && vite build && npm run build:electron",
-    "electron:build": "npm run build && electron-builder",
+    "electron:build": "cross-env CSC_IDENTITY_AUTO_DISCOVERY=false npm run build && cross-env CSC_IDENTITY_AUTO_DISCOVERY=false electron-builder",
     "lint": "eslint ."
   },
   "dependencies": {
@@ -44,18 +44,19 @@
     "appId": "com.career.tracker",
     "productName": "Career Tracker",
     "asar": true,
+    "npmRebuild": false,
     "directories": {
       "output": "dist-electron"
     },
     "files": [
       "dist/**/*",
       "electron/**/*",
-      "node_modules/**/*",
       "package.json"
     ],
     "win": {
-      "target": "nsis",
-      "icon": "public/icon.ico"
+      "target": [
+        { "target": "nsis", "arch": ["x64"] }
+      ]
     },
     "nsis": {
       "oneClick": false,
