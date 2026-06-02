@@ -41,7 +41,6 @@
   min-height: 0;
 }
 @media (min-width: 900px) { .today-grid { grid-template-columns: 1fr 1fr; } }
-@media (min-width: 1300px) { .today-grid { grid-template-columns: 3fr 2fr; } }
 
 .today-section {
   background: var(--bg-card);
