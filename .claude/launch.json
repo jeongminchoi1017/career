@@ -2,9 +2,9 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "career-widget",
+      "name": "career-tracker-dev",
       "runtimeExecutable": "npx",
-      "runtimeArgs": ["vite", "--host", "--open", "widget.html"],
+      "runtimeArgs": ["vite", "--host"],
       "port": 5173
     }
   ]

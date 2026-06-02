@@ -1,6 +1,6 @@
 .archive-page {
-  padding: 32px;
-  max-width: 900px;
+  padding: 32px 40px;
+  max-width: 1200px;
 }
 
 .archive-header h1 {
@@ -14,6 +14,7 @@
   grid-template-columns: repeat(3, 1fr);
   gap: 16px;
   margin-bottom: 24px;
+  max-width: 600px;
 }
 
 .stat-card {

@@ -49,6 +49,7 @@ export default function Today({ onOpenTodo, refresh }: Props) {
         </div>
       </div>
 
+      <div className="today-grid">
       <section className="today-section">
         <div className="section-title-row">
           <h2>할 일 목록</h2>
@@ -100,6 +101,7 @@ export default function Today({ onOpenTodo, refresh }: Props) {
           </ul>
         )}
       </section>
+      </div>
     </div>
   )
 }

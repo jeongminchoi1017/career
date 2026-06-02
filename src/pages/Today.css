@@ -1,13 +1,17 @@
 .today-page {
-  padding: 32px;
-  max-width: 800px;
+  padding: 32px 40px;
+  height: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
 }
 
 .today-header {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  margin-bottom: 32px;
+  margin-bottom: 28px;
+  flex-shrink: 0;
 }
 
 .today-header h1 {
@@ -42,18 +46,43 @@
 .action-btn.primary { background: #4f46e5; border-color: #4f46e5; color: #fff; }
 .action-btn.primary:hover { background: #4338ca; }
 
+/* Responsive 2-column grid */
+.today-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+  flex: 1;
+  min-height: 0;
+}
+
+@media (min-width: 900px) {
+  .today-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (min-width: 1300px) {
+  .today-grid {
+    grid-template-columns: 3fr 2fr;
+  }
+}
+
 .today-section {
   background: #1a1a24;
   border: 1px solid #2a2a3a;
   border-radius: 12px;
   padding: 20px 24px;
-  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .today-section h2 {
   margin: 0 0 16px;
   font-size: 16px;
   color: #ccc;
+  flex-shrink: 0;
 }
 
 .section-title-row {
@@ -61,6 +90,7 @@
   align-items: center;
   justify-content: space-between;
   margin-bottom: 12px;
+  flex-shrink: 0;
 }
 
 .section-title-row h2 { margin: 0; }
@@ -73,6 +103,7 @@
   border-radius: 2px;
   margin-bottom: 16px;
   overflow: hidden;
+  flex-shrink: 0;
 }
 
 .progress-fill {
@@ -95,6 +126,8 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
+  overflow-y: auto;
+  flex: 1;
 }
 
 .todo-item {
@@ -106,6 +139,7 @@
   background: #0f0f18;
   border: 1px solid #2a2a3a;
   transition: opacity 0.2s;
+  flex-shrink: 0;
 }
 
 .todo-item.done { opacity: 0.5; }
@@ -160,6 +194,8 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
+  overflow-y: auto;
+  flex: 1;
 }
 
 .commit-item {
@@ -170,6 +206,7 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
+  flex-shrink: 0;
 }
 
 .commit-hash {
