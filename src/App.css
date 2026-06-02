@@ -28,30 +28,30 @@
 }
 
 [data-theme="light"] {
-  --bg:            #eeedf2;
-  --bg-sidebar:    #e8e7ee;
-  --bg-card:       #f4f3f8;
-  --bg-input:      #eceaf1;
-  --bg-deep:       #e8e7ed;
-  --bg-hover:      #e4e2ea;
-  --bg-accent-nav: #e4e2f5;
-  --bg-accent:     #eae8fb;
-  --border:        #d8d6e2;
-  --border-subtle: #dddbe6;
-  --border-accent: #c8c4f0;
-  --text:          #1e1c2e;
-  --text-sub:      #3a3850;
-  --text-muted:    #6e6c88;
-  --text-dim:      #9896b0;
-  --text-dimmer:   #b8b6cc;
-  --text-dimmest:  #cccada;
+  --bg:            #edecea;
+  --bg-sidebar:    #e6e4e1;
+  --bg-card:       #f3f2ef;
+  --bg-input:      #eae9e6;
+  --bg-deep:       #e6e5e2;
+  --bg-hover:      #e2e1dd;
+  --bg-accent-nav: #e8e6f8;
+  --bg-accent:     #edeafb;
+  --border:        #d6d4cf;
+  --border-subtle: #dbd9d5;
+  --border-accent: #ccc8f0;
+  --text:          #2a2825;
+  --text-sub:      #47453f;
+  --text-muted:    #7a7870;
+  --text-dim:      #a09e97;
+  --text-dimmer:   #c0beb7;
+  --text-dimmest:  #d4d2cb;
   --accent:        #4f46e5;
   --accent-hover:  #4338ca;
   --accent-soft:   #4f46e5;
   --git:           #16a34a;
-  --git-bg:        #d1fae5;
-  --git-card-bg:   #ecfdf5;
-  --git-border:    #a7f3d0;
+  --git-bg:        #dcf5e7;
+  --git-card-bg:   #eef8f2;
+  --git-border:    #b8e8cc;
   --danger:        #dc2626;
 }
 
