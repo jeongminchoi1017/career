@@ -18,6 +18,12 @@ export default function App() {
   const bump = useCallback(() => setRefresh(r => r + 1), [])
 
   useEffect(() => {
+    api.getSetting('theme').then(t => {
+      if (t) document.documentElement.setAttribute('data-theme', t)
+    })
+  }, [])
+
+  useEffect(() => {
     const checkinCb = () => setShowCheckin(true)
     const todoCb = () => setShowTodo(true)
     const gitCb = () => bump()

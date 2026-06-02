@@ -18,6 +18,7 @@ export default function Settings() {
   const [newWtColor, setNewWtColor] = useState(COLORS[0])
   const [newTech, setNewTech] = useState('')
   const [saved, setSaved] = useState(false)
+  const [theme, setTheme] = useState<'dark' | 'light'>('dark')
 
   useEffect(() => {
     loadAll()
@@ -33,6 +34,11 @@ export default function Settings() {
       api.getWorkTypes(),
       api.getTechTags(),
     ])
+    const savedTheme = await api.getSetting('theme')
+    if (savedTheme === 'light' || savedTheme === 'dark') {
+      setTheme(savedTheme)
+      document.documentElement.setAttribute('data-theme', savedTheme)
+    }
     if (morning) setMorningTime(morning)
     if (interval) setCheckinInterval(interval)
     if (evening !== null) setEveningNotify(evening !== 'false')
@@ -97,6 +103,12 @@ export default function Settings() {
     setTechTags(tt)
   }
 
+  const changeTheme = async (t: 'dark' | 'light') => {
+    setTheme(t)
+    document.documentElement.setAttribute('data-theme', t)
+    await api.setSetting('theme', t)
+  }
+
   const collectGit = async () => {
     await api.collectGit()
     alert('Git 커밋 수집 완료!')
@@ -105,6 +117,17 @@ export default function Settings() {
   return (
     <div className="settings-page">
       <h1>설정</h1>
+
+      <div className="settings-section">
+        <h2>화면</h2>
+        <div className="theme-toggle-row">
+          <span className="theme-toggle-label">테마</span>
+          <div className="theme-btns">
+            <button className={`theme-btn ${theme === 'dark' ? 'active' : ''}`} onClick={() => changeTheme('dark')}>🌙 다크</button>
+            <button className={`theme-btn ${theme === 'light' ? 'active' : ''}`} onClick={() => changeTheme('light')}>☀️ 라이트</button>
+          </div>
+        </div>
+      </div>
 
       <div className="settings-section">
         <h2>알림</h2>

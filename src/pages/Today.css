@@ -14,39 +14,25 @@
   flex-shrink: 0;
 }
 
-.today-header h1 {
-  margin: 0 0 4px;
-  font-size: 28px;
-  color: #e2e2f0;
-}
+.today-header h1 { margin: 0 0 4px; font-size: 28px; color: var(--text); }
+.today-date { color: var(--text-dim); font-size: 14px; margin: 0; }
 
-.today-date {
-  color: #666;
-  font-size: 14px;
-  margin: 0;
-}
-
-.today-actions {
-  display: flex;
-  gap: 10px;
-}
+.today-actions { display: flex; gap: 10px; }
 
 .action-btn {
   padding: 9px 18px;
   border-radius: 8px;
-  border: 1px solid #333;
+  border: 1px solid var(--border);
   background: transparent;
-  color: #aaa;
+  color: var(--text-muted);
   cursor: pointer;
   font-size: 14px;
   transition: all 0.2s;
 }
+.action-btn:hover { border-color: var(--text-dim); color: var(--text); }
+.action-btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+.action-btn.primary:hover { background: var(--accent-hover); }
 
-.action-btn:hover { border-color: #555; color: #e2e2f0; }
-.action-btn.primary { background: #4f46e5; border-color: #4f46e5; color: #fff; }
-.action-btn.primary:hover { background: #4338ca; }
-
-/* Responsive 2-column grid */
 .today-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -54,22 +40,12 @@
   flex: 1;
   min-height: 0;
 }
-
-@media (min-width: 900px) {
-  .today-grid {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-
-@media (min-width: 1300px) {
-  .today-grid {
-    grid-template-columns: 3fr 2fr;
-  }
-}
+@media (min-width: 900px) { .today-grid { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 1300px) { .today-grid { grid-template-columns: 3fr 2fr; } }
 
 .today-section {
-  background: #1a1a24;
-  border: 1px solid #2a2a3a;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
   border-radius: 12px;
   padding: 20px 24px;
   display: flex;
@@ -78,12 +54,7 @@
   overflow: hidden;
 }
 
-.today-section h2 {
-  margin: 0 0 16px;
-  font-size: 16px;
-  color: #ccc;
-  flex-shrink: 0;
-}
+.today-section h2 { margin: 0 0 16px; font-size: 16px; color: var(--text-sub); flex-shrink: 0; }
 
 .section-title-row {
   display: flex;
@@ -92,32 +63,25 @@
   margin-bottom: 12px;
   flex-shrink: 0;
 }
-
 .section-title-row h2 { margin: 0; }
-
-.progress-text { font-size: 13px; color: #666; }
+.progress-text { font-size: 13px; color: var(--text-dim); }
 
 .progress-bar {
   height: 4px;
-  background: #2a2a3a;
+  background: var(--border);
   border-radius: 2px;
   margin-bottom: 16px;
   overflow: hidden;
   flex-shrink: 0;
 }
-
 .progress-fill {
   height: 100%;
-  background: #4f46e5;
+  background: var(--accent);
   border-radius: 2px;
   transition: width 0.3s ease;
 }
 
-.empty-hint {
-  color: #444;
-  font-size: 14px;
-  padding: 12px 0;
-}
+.empty-hint { color: var(--text-dimmer); font-size: 14px; padding: 12px 0; }
 
 .todo-list {
   list-style: none;
@@ -136,12 +100,11 @@
   gap: 10px;
   padding: 10px 12px;
   border-radius: 8px;
-  background: #0f0f18;
-  border: 1px solid #2a2a3a;
+  background: var(--bg-deep);
+  border: 1px solid var(--border);
   transition: opacity 0.2s;
   flex-shrink: 0;
 }
-
 .todo-item.done { opacity: 0.5; }
 .todo-item.done .todo-content { text-decoration: line-through; }
 
@@ -149,10 +112,10 @@
   width: 22px;
   height: 22px;
   border-radius: 50%;
-  border: 2px solid #333;
+  border: 2px solid var(--border);
   background: transparent;
   cursor: pointer;
-  color: #4f46e5;
+  color: var(--accent);
   font-size: 12px;
   display: flex;
   align-items: center;
@@ -160,32 +123,23 @@
   flex-shrink: 0;
   transition: border-color 0.2s;
 }
+.check-btn:hover { border-color: var(--accent); }
+.todo-item.done .check-btn { background: var(--accent); border-color: var(--accent); color: #fff; }
 
-.check-btn:hover { border-color: #4f46e5; }
-.todo-item.done .check-btn { background: #4f46e5; border-color: #4f46e5; }
-
-.todo-content { flex: 1; font-size: 14px; color: #ddd; }
-
-.todo-tag {
-  font-size: 12px;
-  padding: 2px 8px;
-  border-radius: 4px;
-  background: #2a2a3a;
-  color: #888;
-}
+.todo-content { flex: 1; font-size: 14px; color: var(--text-sub); }
+.todo-tag { font-size: 12px; padding: 2px 8px; border-radius: 4px; background: var(--border); color: var(--text-muted); }
 
 .delete-btn {
   background: none;
   border: none;
-  color: #333;
+  color: var(--text-dimmest);
   cursor: pointer;
   font-size: 12px;
   padding: 2px 6px;
   border-radius: 4px;
   transition: color 0.2s;
 }
-
-.delete-btn:hover { color: #ef4444; }
+.delete-btn:hover { color: var(--danger); }
 
 .commit-list {
   list-style: none;
@@ -201,8 +155,8 @@
 .commit-item {
   padding: 10px 12px;
   border-radius: 8px;
-  background: #0f0f18;
-  border: 1px solid #1a3a1a;
+  background: var(--git-card-bg);
+  border: 1px solid var(--git-border);
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -212,31 +166,20 @@
 .commit-hash {
   font-family: monospace;
   font-size: 12px;
-  color: #4ade80;
-  background: #0a2a0a;
+  color: var(--git);
+  background: var(--git-bg);
   padding: 1px 6px;
   border-radius: 4px;
   align-self: flex-start;
 }
-
-.commit-msg {
-  font-size: 14px;
-  color: #ddd;
-}
-
-.commit-meta {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex-wrap: wrap;
-}
-
-.commit-time { font-size: 12px; color: #555; }
+.commit-msg { font-size: 14px; color: var(--text-sub); }
+.commit-meta { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.commit-time { font-size: 12px; color: var(--text-dim); }
 
 .tech-badge {
   font-size: 11px;
   padding: 2px 7px;
   border-radius: 4px;
-  background: #1a1a3a;
-  color: #818cf8;
+  background: var(--bg-accent);
+  color: var(--accent-soft);
 }
