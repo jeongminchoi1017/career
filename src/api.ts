@@ -76,6 +76,7 @@ const mockApi = {
   },
   onOpenCheckin: () => {},
   onOpenTodo: () => {},
+  onGitUpdated: () => {},
   removeListener: () => {},
 }
 
@@ -115,5 +116,6 @@ export default (electronApi ?? mockApi) as {
 
   onOpenCheckin(cb: () => void): void
   onOpenTodo(cb: () => void): void
+  onGitUpdated(cb: () => void): void
   removeListener(channel: string, cb: (...args: unknown[]) => void): void
 }

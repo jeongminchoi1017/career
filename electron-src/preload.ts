@@ -40,5 +40,6 @@ contextBridge.exposeInMainWorld('api', {
   // Events from main
   onOpenCheckin: (cb: () => void) => ipcRenderer.on('open:checkin', cb),
   onOpenTodo: (cb: () => void) => ipcRenderer.on('open:todo', cb),
+  onGitUpdated: (cb: () => void) => ipcRenderer.on('git:updated', cb),
   removeListener: (channel: string, cb: (...args: unknown[]) => void) => ipcRenderer.removeListener(channel, cb),
 })

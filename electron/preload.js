@@ -33,5 +33,6 @@ electron_1.contextBridge.exposeInMainWorld('api', {
     // Events from main
     onOpenCheckin: (cb) => electron_1.ipcRenderer.on('open:checkin', cb),
     onOpenTodo: (cb) => electron_1.ipcRenderer.on('open:todo', cb),
+    onGitUpdated: (cb) => electron_1.ipcRenderer.on('git:updated', cb),
     removeListener: (channel, cb) => electron_1.ipcRenderer.removeListener(channel, cb),
 });

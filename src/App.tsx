@@ -20,11 +20,14 @@ export default function App() {
   useEffect(() => {
     const checkinCb = () => setShowCheckin(true)
     const todoCb = () => setShowTodo(true)
+    const gitCb = () => bump()
     api.onOpenCheckin(checkinCb)
     api.onOpenTodo(todoCb)
+    api.onGitUpdated(gitCb)
     return () => {
       api.removeListener('open:checkin', checkinCb)
       api.removeListener('open:todo', todoCb)
+      api.removeListener('git:updated', gitCb)
     }
   }, [])
 

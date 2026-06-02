@@ -1,5 +1,6 @@
 import { app, BrowserWindow, ipcMain, Notification } from 'electron'
 import path from 'path'
+import fs from 'fs'
 import {
   getDb, insertLog, getLogs, getLogsByDate, deleteLog,
   getTodos, insertTodo, toggleTodo, deleteTodo,
@@ -42,10 +43,40 @@ app.whenReady().then(() => {
   setupIpc()
   scheduleNotifications()
 
-  // Collect git logs on startup and every 24 hours
+  // Collect git logs on startup, every 24 hours, and on new commits
   collectGitLogs()
   setInterval(collectGitLogs, 24 * 60 * 60 * 1000)
+  watchGitRepos()
 })
+
+// --- Git file watcher ---
+const gitWatchers: fs.FSWatcher[] = []
+
+function watchGitRepos() {
+  // Clean up existing watchers
+  gitWatchers.forEach(w => w.close())
+  gitWatchers.length = 0
+
+  const reposRaw = getSetting('git_repos')
+  if (!reposRaw) return
+  let repos: string[] = []
+  try { repos = JSON.parse(reposRaw) } catch { return }
+
+  for (const repoPath of repos) {
+    const headLog = path.join(repoPath, '.git', 'logs', 'HEAD')
+    if (!fs.existsSync(headLog)) continue
+
+    let debounce: ReturnType<typeof setTimeout> | null = null
+    const watcher = fs.watch(headLog, () => {
+      if (debounce) clearTimeout(debounce)
+      debounce = setTimeout(async () => {
+        await collectGitLogs()
+        mainWindow?.webContents.send('git:updated')
+      }, 1000)
+    })
+    gitWatchers.push(watcher)
+  }
+}
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit()
@@ -136,9 +167,11 @@ function setupIpc() {
   ipcMain.handle('db:getSetting', (_, key) => getSetting(key))
   ipcMain.handle('db:setSetting', (_, key, value) => {
     setSetting(key, value)
-    // Reschedule if notification settings changed
     if (['morning_time', 'checkin_interval', 'evening_notify', 'evening_time'].includes(key)) {
       scheduleNotifications()
+    }
+    if (key === 'git_repos') {
+      watchGitRepos()
     }
   })
 

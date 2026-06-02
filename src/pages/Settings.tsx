@@ -54,14 +54,20 @@ export default function Settings() {
     setTimeout(() => setSaved(false), 2000)
   }
 
-  const addRepo = () => {
-    if (newRepo.trim() && !repos.includes(newRepo.trim())) {
-      setRepos(prev => [...prev, newRepo.trim()])
-      setNewRepo('')
-    }
+  const addRepo = async () => {
+    const path = newRepo.trim()
+    if (!path || repos.includes(path)) return
+    const updated = [...repos, path]
+    setRepos(updated)
+    setNewRepo('')
+    await api.setSetting('git_repos', JSON.stringify(updated))
   }
 
-  const removeRepo = (r: string) => setRepos(prev => prev.filter(x => x !== r))
+  const removeRepo = async (r: string) => {
+    const updated = repos.filter(x => x !== r)
+    setRepos(updated)
+    await api.setSetting('git_repos', JSON.stringify(updated))
+  }
 
   const addWorkType = async () => {
     if (!newWtLabel.trim()) return

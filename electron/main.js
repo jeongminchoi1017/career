@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const electron_1 = require("electron");
 const path_1 = __importDefault(require("path"));
+const fs_1 = __importDefault(require("fs"));
 const db_1 = require("./db");
 const git_collector_1 = require("./git-collector");
 const isDev = process.env.NODE_ENV === 'development';
@@ -35,10 +36,43 @@ electron_1.app.whenReady().then(() => {
     createWindow();
     setupIpc();
     scheduleNotifications();
-    // Collect git logs on startup and every 24 hours
+    // Collect git logs on startup, every 24 hours, and on new commits
     (0, git_collector_1.collectGitLogs)();
     setInterval(git_collector_1.collectGitLogs, 24 * 60 * 60 * 1000);
+    watchGitRepos();
 });
+// --- Git file watcher ---
+const gitWatchers = [];
+function watchGitRepos() {
+    // Clean up existing watchers
+    gitWatchers.forEach(w => w.close());
+    gitWatchers.length = 0;
+    const reposRaw = (0, db_1.getSetting)('git_repos');
+    if (!reposRaw)
+        return;
+    let repos = [];
+    try {
+        repos = JSON.parse(reposRaw);
+    }
+    catch {
+        return;
+    }
+    for (const repoPath of repos) {
+        const headLog = path_1.default.join(repoPath, '.git', 'logs', 'HEAD');
+        if (!fs_1.default.existsSync(headLog))
+            continue;
+        let debounce = null;
+        const watcher = fs_1.default.watch(headLog, () => {
+            if (debounce)
+                clearTimeout(debounce);
+            debounce = setTimeout(async () => {
+                await (0, git_collector_1.collectGitLogs)();
+                mainWindow?.webContents.send('git:updated');
+            }, 1000);
+        });
+        gitWatchers.push(watcher);
+    }
+}
 electron_1.app.on('window-all-closed', () => {
     if (process.platform !== 'darwin')
         electron_1.app.quit();
@@ -126,9 +160,11 @@ function setupIpc() {
     electron_1.ipcMain.handle('db:getSetting', (_, key) => (0, db_1.getSetting)(key));
     electron_1.ipcMain.handle('db:setSetting', (_, key, value) => {
         (0, db_1.setSetting)(key, value);
-        // Reschedule if notification settings changed
         if (['morning_time', 'checkin_interval', 'evening_notify', 'evening_time'].includes(key)) {
             scheduleNotifications();
+        }
+        if (key === 'git_repos') {
+            watchGitRepos();
         }
     });
     electron_1.ipcMain.handle('db:getWorkTypes', () => (0, db_1.getWorkTypes)());
