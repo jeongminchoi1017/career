@@ -168,14 +168,9 @@ export default function Settings() {
             )}
           </div>
         </div>
-        <div style={{ display: 'flex', gap: '10px', marginTop: '16px' }}>
-          <button className="save-btn" onClick={saveSettings}>
-            {saved ? '저장됨 ✓' : '설정 저장'}
-          </button>
-          <button className="test-notify-btn" onClick={() => api.testNotification?.()}>
-            🔔 알림 테스트
-          </button>
-        </div>
+        <button className="save-btn" onClick={saveSettings}>
+          {saved ? '저장됨 ✓' : '설정 저장'}
+        </button>
       </div>
 
       <div className="settings-section">
@@ -199,12 +194,7 @@ export default function Settings() {
           ))}
         </ul>
         {repos.length > 0 && (
-          <div style={{ display: 'flex', gap: '8px', marginTop: '12px' }}>
-            <button className="collect-btn" onClick={collectGit}>지금 수집</button>
-            <button className="collect-btn" style={{ color: 'var(--danger)', borderColor: 'var(--danger)' }} onClick={cleanAndRecollect}>
-              내 커밋만 다시 수집
-            </button>
-          </div>
+          <button className="collect-btn" onClick={collectGit}>지금 수집</button>
         )}
       </div>
 
