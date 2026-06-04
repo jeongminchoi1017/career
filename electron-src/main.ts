@@ -2,7 +2,7 @@ import { app, BrowserWindow, ipcMain, Notification, Tray, Menu, globalShortcut, 
 import path from 'path'
 import fs from 'fs'
 import {
-  getDb, insertLog, getLogs, getLogsByDate, deleteLog, updateLog,
+  getDb, insertLog, getLogs, getLogsByDate, deleteLog, updateLog, cleanGitLogs,
   getTodos, insertTodo, toggleTodo, deleteTodo,
   getSetting, setSetting,
   getWorkTypes, insertWorkType, deleteWorkType, reorderWorkTypes,
@@ -274,6 +274,12 @@ function setupIpc() {
   ipcMain.handle('db:getStats', () => getStats())
 
   ipcMain.handle('git:collect', async () => {
+    await collectGitLogs()
+    return true
+  })
+
+  ipcMain.handle('git:cleanAndRecollect', async () => {
+    cleanGitLogs()
     await collectGitLogs()
     return true
   })

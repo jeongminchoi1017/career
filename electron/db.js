@@ -24,6 +24,7 @@ exports.getTechTags = getTechTags;
 exports.insertTechTag = insertTechTag;
 exports.deleteTechTag = deleteTechTag;
 exports.getStats = getStats;
+exports.cleanGitLogs = cleanGitLogs;
 exports.resetAllData = resetAllData;
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const { Database } = require('node-sqlite3-wasm');
@@ -198,6 +199,10 @@ function getStats() {
     const totalCommits = db.get("SELECT COUNT(*) as c FROM logs WHERE source = 'git'").c;
     const workDays = db.get("SELECT COUNT(DISTINCT substr(timestamp,1,10)) as c FROM logs").c;
     return { totalLogs, totalCommits, workDays };
+}
+// --- Clean git logs ---
+function cleanGitLogs() {
+    getDb().run("DELETE FROM logs WHERE source = 'git'");
 }
 // --- Reset ---
 function resetAllData() {

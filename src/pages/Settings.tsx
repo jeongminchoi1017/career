@@ -114,6 +114,11 @@ export default function Settings() {
     alert('Git 커밋 수집 완료!')
   }
 
+  const cleanAndRecollect = async () => {
+    await api.cleanAndRecollectGit()
+    alert('내 커밋만 다시 수집했습니다!')
+  }
+
   return (
     <div className="settings-page">
       <h1>설정</h1>
@@ -194,7 +199,12 @@ export default function Settings() {
           ))}
         </ul>
         {repos.length > 0 && (
-          <button className="collect-btn" onClick={collectGit}>지금 수집</button>
+          <div style={{ display: 'flex', gap: '8px', marginTop: '12px' }}>
+            <button className="collect-btn" onClick={collectGit}>지금 수집</button>
+            <button className="collect-btn" style={{ color: 'var(--danger)', borderColor: 'var(--danger)' }} onClick={cleanAndRecollect}>
+              내 커밋만 다시 수집
+            </button>
+          </div>
         )}
       </div>
 

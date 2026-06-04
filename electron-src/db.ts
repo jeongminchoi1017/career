@@ -225,6 +225,11 @@ export function getStats() {
   return { totalLogs, totalCommits, workDays }
 }
 
+// --- Clean git logs ---
+export function cleanGitLogs() {
+  getDb().run("DELETE FROM logs WHERE source = 'git'")
+}
+
 // --- Reset ---
 export function resetAllData() {
   const db = getDb()

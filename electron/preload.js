@@ -29,6 +29,7 @@ electron_1.contextBridge.exposeInMainWorld('api', {
     getStats: () => electron_1.ipcRenderer.invoke('db:getStats'),
     // Git
     collectGit: () => electron_1.ipcRenderer.invoke('git:collect'),
+    cleanAndRecollectGit: () => electron_1.ipcRenderer.invoke('git:cleanAndRecollect'),
     // Reset
     resetAllData: () => electron_1.ipcRenderer.invoke('db:resetAllData'),
     // Notification test

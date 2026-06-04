@@ -259,6 +259,11 @@ function setupIpc() {
         await (0, git_collector_1.collectGitLogs)();
         return true;
     });
+    electron_1.ipcMain.handle('git:cleanAndRecollect', async () => {
+        (0, db_1.cleanGitLogs)();
+        await (0, git_collector_1.collectGitLogs)();
+        return true;
+    });
     electron_1.ipcMain.handle('db:resetAllData', () => {
         (0, db_1.resetAllData)();
         return true;

@@ -92,6 +92,7 @@ const mockApi = {
   },
   getStats: async (): Promise<Stats> => ({ totalLogs: 0, totalCommits: 0, workDays: 0 }),
   collectGit: async () => {},
+  cleanAndRecollectGit: async () => {},
   resetAllData: async () => {
     mockLogs.splice(0)
     mockTodos.splice(0)
@@ -138,6 +139,7 @@ export default (electronApi ?? mockApi) as {
 
   getStats(): Promise<Stats>
   collectGit(): Promise<void>
+  cleanAndRecollectGit(): Promise<void>
   resetAllData(): Promise<void>
 
   onOpenCheckin(cb: () => void): void

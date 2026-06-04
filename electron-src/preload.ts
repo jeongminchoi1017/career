@@ -34,6 +34,7 @@ contextBridge.exposeInMainWorld('api', {
 
   // Git
   collectGit: () => ipcRenderer.invoke('git:collect'),
+  cleanAndRecollectGit: () => ipcRenderer.invoke('git:cleanAndRecollect'),
 
   // Reset
   resetAllData: () => ipcRenderer.invoke('db:resetAllData'),
