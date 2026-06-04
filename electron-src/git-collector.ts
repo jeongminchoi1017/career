@@ -57,7 +57,19 @@ export async function collectGitLogs() {
 
 async function collectRepo(repoPath: string) {
   const git = simpleGit(repoPath)
-  const log = await git.log({ maxCount: 50, '--all': null })
+
+  // 현재 사용자 이메일로 필터링
+  let authorEmail = ''
+  try {
+    authorEmail = (await git.raw(['config', 'user.email'])).trim()
+  } catch {
+    // git config 없으면 필터 없이 수집
+  }
+
+  const logOptions: Record<string, unknown> = { maxCount: 100 }
+  if (authorEmail) logOptions['--author'] = authorEmail
+
+  const log = await git.log(logOptions)
 
   const existingHashes = new Set(
     (getLogs() as Array<{ commit_hash: string | null }>)

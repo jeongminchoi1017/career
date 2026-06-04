@@ -65,7 +65,18 @@ async function collectGitLogs() {
 }
 async function collectRepo(repoPath) {
     const git = (0, simple_git_1.default)(repoPath);
-    const log = await git.log({ maxCount: 50, '--all': null });
+    // 현재 사용자 이메일로 필터링
+    let authorEmail = '';
+    try {
+        authorEmail = (await git.raw(['config', 'user.email'])).trim();
+    }
+    catch {
+        // git config 없으면 필터 없이 수집
+    }
+    const logOptions = { maxCount: 100 };
+    if (authorEmail)
+        logOptions['--author'] = authorEmail;
+    const log = await git.log(logOptions);
     const existingHashes = new Set((0, db_1.getLogs)()
         .filter(l => l.commit_hash)
         .map(l => l.commit_hash));
