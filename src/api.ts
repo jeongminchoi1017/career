@@ -102,6 +102,7 @@ const mockApi = {
   removeListener: () => {},
   hideWidget: () => {},
   openMainWindow: () => {},
+  testNotification: async () => { alert('알림 테스트 (브라우저 환경)') },
 }
 
 export default (electronApi ?? mockApi) as {
@@ -145,4 +146,5 @@ export default (electronApi ?? mockApi) as {
   removeListener(channel: string, cb: (...args: unknown[]) => void): void
   hideWidget?(): void
   openMainWindow?(): void
+  testNotification?(): Promise<void>
 }

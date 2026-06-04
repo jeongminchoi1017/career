@@ -163,9 +163,14 @@ export default function Settings() {
             )}
           </div>
         </div>
-        <button className="save-btn" onClick={saveSettings}>
-          {saved ? '저장됨 ✓' : '설정 저장'}
-        </button>
+        <div style={{ display: 'flex', gap: '10px', marginTop: '16px' }}>
+          <button className="save-btn" onClick={saveSettings}>
+            {saved ? '저장됨 ✓' : '설정 저장'}
+          </button>
+          <button className="test-notify-btn" onClick={() => api.testNotification?.()}>
+            🔔 알림 테스트
+          </button>
+        </div>
       </div>
 
       <div className="settings-section">

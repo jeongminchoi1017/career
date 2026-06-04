@@ -24,7 +24,10 @@
 .toggle-thumb { position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: #fff; transition: transform 0.2s; display: block; }
 .toggle.on .toggle-thumb { transform: translateX(20px); }
 
-.save-btn { margin-top: 16px; padding: 9px 24px; border-radius: 8px; border: none; background: var(--accent); color: #fff; cursor: pointer; font-size: 14px; font-weight: 500; transition: all 0.2s; }
+.test-notify-btn { padding: 9px 18px; border-radius: 8px; border: 1px solid var(--border); background: transparent; color: var(--text-muted); cursor: pointer; font-size: 14px; transition: all 0.2s; }
+.test-notify-btn:hover { border-color: var(--accent); color: var(--accent-soft); }
+
+.save-btn { margin-top: 0; padding: 9px 24px; border-radius: 8px; border: none; background: var(--accent); color: #fff; cursor: pointer; font-size: 14px; font-weight: 500; transition: all 0.2s; }
 .save-btn:hover { background: var(--accent-hover); }
 
 .add-row { display: flex; gap: 8px; margin-bottom: 12px; align-items: center; }

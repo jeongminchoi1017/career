@@ -31,6 +31,8 @@ electron_1.contextBridge.exposeInMainWorld('api', {
     collectGit: () => electron_1.ipcRenderer.invoke('git:collect'),
     // Reset
     resetAllData: () => electron_1.ipcRenderer.invoke('db:resetAllData'),
+    // Notification test
+    testNotification: () => electron_1.ipcRenderer.invoke('notify:test'),
     // Widget
     hideWidget: () => electron_1.ipcRenderer.invoke('widget:hide'),
     openMainWindow: () => electron_1.ipcRenderer.invoke('widget:openMain'),

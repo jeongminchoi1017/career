@@ -9,6 +9,8 @@ const fs_1 = __importDefault(require("fs"));
 const db_1 = require("./db");
 const git_collector_1 = require("./git-collector");
 const isDev = process.env.NODE_ENV === 'development';
+// Windows 알림 필수 설정
+electron_1.app.setAppUserModelId('com.career.tracker');
 let mainWindow = null;
 let widgetWindow = null;
 let tray = null;
@@ -154,6 +156,7 @@ electron_1.app.on('activate', () => {
 // --- Notifications ---
 let morningTimer = null;
 let checkinTimer = null;
+let lastCheckinNotifyTime = 0;
 let eveningTimer = null;
 function scheduleNotifications() {
     scheduleMorning();
@@ -181,10 +184,16 @@ function scheduleMorning() {
 function scheduleCheckin() {
     if (checkinTimer)
         clearInterval(checkinTimer);
-    const intervalMin = parseInt((0, db_1.getSetting)('checkin_interval') ?? '120');
+    lastCheckinNotifyTime = Date.now();
+    // 1분마다 폴링 — Windows 타이머 억제 우회
     checkinTimer = setInterval(() => {
-        sendNotification('Career Tracker', '지금 무엇을 하고 있나요? 체크인 해주세요 ✏️', 'checkin');
-    }, intervalMin * 60 * 1000);
+        const intervalMin = parseInt((0, db_1.getSetting)('checkin_interval') ?? '120');
+        const intervalMs = intervalMin * 60 * 1000;
+        if (Date.now() - lastCheckinNotifyTime >= intervalMs) {
+            sendNotification('Career Tracker', '지금 무엇을 하고 있나요? 체크인 해주세요 ✏️', 'checkin');
+            lastCheckinNotifyTime = Date.now();
+        }
+    }, 60 * 1000); // 1분마다 체크
 }
 function scheduleEvening() {
     if (eveningTimer)
@@ -253,6 +262,9 @@ function setupIpc() {
     electron_1.ipcMain.handle('db:resetAllData', () => {
         (0, db_1.resetAllData)();
         return true;
+    });
+    electron_1.ipcMain.handle('notify:test', () => {
+        sendNotification('Career Tracker', '알림 테스트입니다 ✏️', 'checkin');
     });
     electron_1.ipcMain.handle('widget:hide', () => widgetWindow?.hide());
     electron_1.ipcMain.handle('widget:openMain', () => {

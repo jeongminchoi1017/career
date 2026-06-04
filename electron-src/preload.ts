@@ -38,6 +38,9 @@ contextBridge.exposeInMainWorld('api', {
   // Reset
   resetAllData: () => ipcRenderer.invoke('db:resetAllData'),
 
+  // Notification test
+  testNotification: () => ipcRenderer.invoke('notify:test'),
+
   // Widget
   hideWidget: () => ipcRenderer.invoke('widget:hide'),
   openMainWindow: () => ipcRenderer.invoke('widget:openMain'),
