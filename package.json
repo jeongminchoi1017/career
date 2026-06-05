@@ -71,7 +71,9 @@
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
-      "shortcutName": "Career Tracker"
+      "shortcutName": "Career Tracker",
+      "deleteAppDataOnUninstall": false,
+      "warningsAsErrors": false
     }
   }
 }

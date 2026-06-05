@@ -14,7 +14,12 @@ let db: DB
 
 export function getDb(): DB {
   if (!db) {
-    const dbPath = path.join(app.getPath('userData'), 'career-tracker.db')
+    // 개발/운영 모두 동일한 경로 사용 (productName 기준)
+    const userDataPath = app.getPath('userData').replace(/career-tracker$/i, 'Career Tracker')
+    const dbPath = path.join(userDataPath, 'career-tracker.db')
+    // 디렉토리가 없으면 생성
+    const fs = require('fs') as typeof import('fs')
+    if (!fs.existsSync(userDataPath)) fs.mkdirSync(userDataPath, { recursive: true })
     db = new Database(dbPath)
     initSchema()
   }
