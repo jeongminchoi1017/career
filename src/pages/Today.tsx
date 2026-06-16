@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import api from '../api'
 import type { Todo, Log } from '../types'
+import { localDateString } from '../utils/date'
 import './Today.css'
 
 interface Props {
@@ -9,7 +10,7 @@ interface Props {
 }
 
 export default function Today({ onOpenTodo, refresh }: Props) {
-  const today = new Date().toISOString().slice(0, 10)
+  const today = localDateString()
   const [todos, setTodos] = useState<Todo[]>([])
   const [commits, setCommits] = useState<Log[]>([])
 

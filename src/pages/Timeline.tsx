@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react'
 import api from '../api'
 import type { Log } from '../types'
 import EditLogModal from '../components/EditLogModal'
+import { localDateString } from '../utils/date'
 import './Timeline.css'
 
 interface Props {
@@ -10,7 +11,7 @@ interface Props {
 
 export default function Timeline({ refresh }: Props) {
   const [logs, setLogs] = useState<Log[]>([])
-  const [date, setDate] = useState(new Date().toISOString().slice(0, 10))
+  const [date, setDate] = useState(localDateString())
   const [editingLog, setEditingLog] = useState<Log | null>(null)
   const [confirmDeleteId, setConfirmDeleteId] = useState<number | null>(null)
 
@@ -33,7 +34,7 @@ export default function Timeline({ refresh }: Props) {
     setDate(d.toISOString().slice(0, 10))
   }
 
-  const isToday = date === new Date().toISOString().slice(0, 10)
+  const isToday = date === localDateString()
 
   const remove = async (id: number) => {
     await api.deleteLog(id)

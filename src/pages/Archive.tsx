@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import api from '../api'
 import type { Log, Stats } from '../types'
+import { localDateString } from '../utils/date'
 import './Archive.css'
 
 export default function Archive() {
@@ -9,9 +10,9 @@ export default function Archive() {
   const [fromDate, setFromDate] = useState(() => {
     const d = new Date()
     d.setMonth(d.getMonth() - 1)
-    return d.toISOString().slice(0, 10)
+    return localDateString(d)
   })
-  const [toDate, setToDate] = useState(new Date().toISOString().slice(0, 10))
+  const [toDate, setToDate] = useState(localDateString())
   const [exporting, setExporting] = useState(false)
   const [exportText, setExportText] = useState('')
 

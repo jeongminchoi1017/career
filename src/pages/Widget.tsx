@@ -1,10 +1,11 @@
 import { useState, useEffect, useCallback } from 'react'
 import api from '../api'
 import type { Todo, Log, WorkType, TechTag } from '../types'
+import { localDateString } from '../utils/date'
 import './Widget.css'
 
 export default function Widget() {
-  const today = new Date().toISOString().slice(0, 10)
+  const today = localDateString()
   const [todos, setTodos] = useState<Todo[]>([])
   const [checkins, setCheckins] = useState<Log[]>([])
   const [workTypes, setWorkTypes] = useState<WorkType[]>([])

@@ -7,6 +7,7 @@ import CheckinModal from './components/CheckinModal'
 import TodoModal from './components/TodoModal'
 import type { Page } from './types'
 import api from './api'
+import { localDateString } from './utils/date'
 import './App.css'
 
 export default function App() {
@@ -37,7 +38,7 @@ export default function App() {
     }
   }, [])
 
-  const today = new Date().toISOString().slice(0, 10)
+  const today = localDateString()
 
   const NAV: { key: Page; label: string; icon: string }[] = [
     { key: 'today', label: '오늘', icon: '☀️' },
