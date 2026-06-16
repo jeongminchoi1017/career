@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import api from '../api'
+import { localISOString } from '../utils/date'
 import type { WorkType, TechTag } from '../types'
 import './Modal.css'
 
@@ -48,7 +49,7 @@ export default function CheckinModal({ onClose, onSaved }: Props) {
     setError('')
     try {
       await api.insertLog({
-        timestamp: new Date().toISOString(),
+        timestamp: localISOString(),
         source: 'checkin',
         work_type: selectedType || undefined,
         techs: selectedTechs.length ? selectedTechs : undefined,

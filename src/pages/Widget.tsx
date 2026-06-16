@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import api from '../api'
 import type { Todo, Log, WorkType, TechTag } from '../types'
-import { localDateString } from '../utils/date'
+import { localDateString, localISOString } from '../utils/date'
 import './Widget.css'
 
 export default function Widget() {
@@ -49,7 +49,7 @@ export default function Widget() {
   const saveCheckin = async () => {
     if (!checkinInput.trim()) return
     await api.insertLog({
-      timestamp: new Date().toISOString(),
+      timestamp: localISOString(),
       source: 'checkin',
       work_type: selectedType || undefined,
       techs: selectedTechs.length ? selectedTechs : undefined,

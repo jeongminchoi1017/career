@@ -26,6 +26,44 @@ export function getDb(): DB {
   return db
 }
 
+function toLocalISO(d: Date): string {
+  const y = d.getFullYear()
+  const mo = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+  const h = String(d.getHours()).padStart(2, '0')
+  const mi = String(d.getMinutes()).padStart(2, '0')
+  const s = String(d.getSeconds()).padStart(2, '0')
+  const ms = String(d.getMilliseconds()).padStart(3, '0')
+  return `${y}-${mo}-${day}T${h}:${mi}:${s}.${ms}`
+}
+
+function toLocalDateStr(d: Date): string {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+}
+
+function migrateUTCTimestamps() {
+  // Migrate log timestamps from UTC (ends with Z or +offset) to local ISO
+  const rows = db.all(
+    "SELECT id, timestamp FROM logs WHERE timestamp LIKE '%Z' OR timestamp LIKE '%+%'"
+  ) as { id: number; timestamp: string }[]
+
+  // Collect date pairs where UTC date != local date (evidence of timezone mismatch)
+  const datePairs = new Map<string, string>() // utcDate → localDate
+  for (const row of rows) {
+    const d = new Date(row.timestamp)
+    if (isNaN(d.getTime())) continue
+    const utcDate = row.timestamp.slice(0, 10)
+    const localDate = toLocalDateStr(d)
+    if (utcDate !== localDate) datePairs.set(utcDate, localDate)
+    db.run('UPDATE logs SET timestamp = ? WHERE id = ?', [toLocalISO(d), row.id])
+  }
+
+  // Fix todos whose date was saved as UTC date (e.g. 08:00 KST saved as previous UTC date)
+  for (const [utcDate, localDate] of datePairs) {
+    db.run('UPDATE todos SET date = ? WHERE date = ?', [localDate, utcDate])
+  }
+}
+
 export function initSchema() {
   db.run(`
     CREATE TABLE IF NOT EXISTS logs (
@@ -50,6 +88,14 @@ export function initSchema() {
     )
   `)
   db.run(`CREATE TABLE IF NOT EXISTS settings (key TEXT PRIMARY KEY, value TEXT)`)
+
+  // Run one-time migrations
+  const dbVersion = parseInt((db.get('SELECT value FROM settings WHERE key = ?', ['db_version']) as { value: string } | undefined)?.value ?? '0')
+  if (dbVersion < 1) {
+    migrateUTCTimestamps()
+    db.run('INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)', ['db_version', '1'])
+  }
+
   db.run(`
     CREATE TABLE IF NOT EXISTS work_types (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
